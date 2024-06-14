@@ -1,0 +1,11 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.16.0"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^1.1.1",
+    "solmate": "^6.2.0"
+  }
+}
