@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// TODO likely need to fix number of shares?
+// TODO revise
 
 import "./GradientSAVault.sol";
 
@@ -12,30 +12,36 @@ import "solmate/src/utils/ReentrancyGuard.sol";
 
 contract GradientDebtVault is ERC4626, ReentrancyGuard {
 
-    address[] all_gradient_SA;
-    mapping(address => uint256) share_value_by_SA;
+    GradientSAVault[] SA;
+    mapping(address => int256) change_in_balance;
 
     constructor(address dai) ERC4626(ERC20(dai), "Gradient Collateral", "GRADC") {}
 
-    function registerGradientSA() {
-        all_gradient_SA.push(msg.sender);
-        share_value_by_SA[msg.sender] = GradientSAVault(msg.sender).value; // TODO placeholder for now
+    function registerGradientSA() public {
+        SA.push(GradientSAVault(msg.sender));
     }
 
-    function adjustShares() {
-        // TODO
+    function adjustShares() public {
+        for (uint i = 0; i < SA.length; i++) {
+
+            address vault = address(SA[i]);
+
+            uint256 delta = SA[i].delta();
+            uint256 currentBalance = ERC20(address(this)).balanceOf(address(SA[i]));
+            uint256 adjustedBalance = currentBalance * delta;
+
+            if (delta < 1) {
+                _burn(vault, currentBalance - adjustedBalance);
+            } else if (delta > 1) {
+                _mint(vault, adjustedBalance - currentBalance);
+            }
+        }
     }
 
     /**
      * @inheritdoc ERC4626
      */
     function totalAssets() public view override returns (uint256) {
-        assembly { // better safe than sorry
-            if eq(sload(0), 2) {
-                mstore(0x00, 0xed3ba6a6)
-                revert(0x1c, 0x04)
-            }
-        }
         return asset.balanceOf(address(this));
     }
 

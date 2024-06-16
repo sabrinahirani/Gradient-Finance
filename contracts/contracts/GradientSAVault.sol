@@ -18,6 +18,8 @@ contract GradientSAVault is ERC4626, ChainlinkClient, ReentrancyGuard {
     using Chainlink for Chainlink.Request;
 
     uint256 public value;
+    uint256 public timestamp;
+    uint256 public delta;
 
     struct Asset {
         string ticker;
@@ -102,6 +104,8 @@ contract GradientSAVault is ERC4626, ChainlinkClient, ReentrancyGuard {
 
     function calculateSAValue() public returns (bool) {
 
+        // if timestamp not next then revert
+
         if (underlying_asset_qty_is_empty) {
             underlying_asset_qty_is_empty = !calculateQty();
             return true;
@@ -112,7 +116,9 @@ contract GradientSAVault is ERC4626, ChainlinkClient, ReentrancyGuard {
             string memory _ticker = underlying_assets[i].ticker;
             _totalValue += underlying_asset_qty[_ticker] * underlying_asset_value[_ticker];
         }
+        delta = _totalValue / value;
         value = _totalValue;
+        timestamp = block.timestamp;
         return true;
 
     }
@@ -131,12 +137,6 @@ contract GradientSAVault is ERC4626, ChainlinkClient, ReentrancyGuard {
      * @inheritdoc ERC4626
      */
     function totalAssets() public view override returns (uint256) {
-        assembly { // better safe than sorry
-            if eq(sload(0), 2) {
-                mstore(0x00, 0xed3ba6a6)
-                revert(0x1c, 0x04)
-            }
-        }
         return asset.balanceOf(address(this));
     }
     
