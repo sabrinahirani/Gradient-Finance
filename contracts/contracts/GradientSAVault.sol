@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// TODO review arithmetic + ownership
+// TODO revise ownership
+// TODO revise arithmetic
+// TODO revise shares, get value of single share, etc.
+
+import "./GradientDebtVault.sol";
 
 import "../node_modules/solmate/src/mixins/ERC4626.sol";
 import "../node_modules/solmate/src/tokens/ERC20.sol"; // for GRADC token
@@ -73,6 +77,9 @@ contract GradientSAVault is ERC4626, ChainlinkClient, ReentrancyGuard {
         for (uint i = 0; i < _tickers.length; i++) {
             underlying_assets.push(Asset({ticker: _tickers[i], weight: _weights[i]}));
         }
+
+        // register SA
+        GradientDebtVault(_collateral).registerGradientSA();
 
     }
 

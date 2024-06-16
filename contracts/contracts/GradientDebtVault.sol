@@ -1,15 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+// TODO likely need to fix number of shares?
+
+import "./GradientSAVault.sol";
+
 import "../node_modules/solmate/src/mixins/ERC4626.sol";
 import "../node_modules/solmate/src/tokens/ERC20.sol"; // for DAI
+
 import "solmate/src/utils/ReentrancyGuard.sol";
 
 contract GradientDebtVault is ERC4626, ReentrancyGuard {
 
+    address[] all_gradient_SA;
+    mapping(address => uint256) share_value_by_SA;
+
     constructor(address dai) ERC4626(ERC20(dai), "Gradient Collateral", "GRADC") {}
 
-    // TODO method for adjusting share based on price movements + ratios between GradientSAVault
+    function registerGradientSA() {
+        all_gradient_SA.push(msg.sender);
+        share_value_by_SA[msg.sender] = GradientSAVault(msg.sender).value; // TODO placeholder for now
+    }
+
+    function adjustShares() {
+        // TODO
+    }
 
     /**
      * @inheritdoc ERC4626
