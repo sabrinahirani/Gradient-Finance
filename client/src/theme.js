@@ -7,6 +7,11 @@ const theme = extendTheme({
     heading: `'Inter', sans-serif`,
     body: `'Inter', sans-serif`,
   },
+  colors: {
+    gradient: {
+      500: '#019b7a',
+    },
+  },
 });
 
 export default theme;
