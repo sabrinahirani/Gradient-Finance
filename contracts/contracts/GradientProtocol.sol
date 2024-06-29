@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../../node_modules/solmate/src/mixins/ERC4626.sol";
-import "../../node_modules/solmate/src/tokens/ERC20.sol";
-import "../../node_modules/@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+import "solmate/src/mixins/ERC4626.sol";
+import "solmate/src/tokens/ERC20.sol";
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 
-import "../../node_modules/solmate/src/utils/ReentrancyGuard.sol";
-import "../../node_modules/solmate/src/utils/FixedPointMathLib.sol";
-import "../../node_modules/solmate/src/auth/Owned.sol";
+import "solmate/src/utils/ReentrancyGuard.sol";
+import "solmate/src/utils/FixedPointMathLib.sol";
+import "solmate/src/auth/Owned.sol";
 
 contract GradientCollateral is ERC4626, ReentrancyGuard {
 
