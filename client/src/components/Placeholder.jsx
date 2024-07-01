@@ -1,6 +1,6 @@
 import { Box, Heading } from '@chakra-ui/react';
 
-function Derivatives() {
+function Placeholder() {
 
   return (
     <Box className='home'>
@@ -9,4 +9,4 @@ function Derivatives() {
   );
 }
 
-export default Derivatives;
+export default Placeholder;

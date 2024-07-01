@@ -1,7 +1,8 @@
 import React from 'react';
 import { Box, HStack, Heading, Button } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
 import {ReactTyped} from 'react-typed';
+import { Link } from 'react-router-dom';
+
 import logo from '../assets/greg-outline.png';
 
 function Home() {
@@ -21,13 +22,10 @@ function Home() {
         />
       </Heading>
       <HStack spacing={4} marginTop={8}>
-        <Link to="/mint-gradc">
+        <Link to="/mint">
         <Button size='sm' colorScheme='teal' variant='outline'>Mint GRADC</Button>
         </Link>
-        <Link to="/mint-sa">
-        <Button size='sm' colorScheme='teal' variant='outline'>Mint Synthetic Asset</Button>
-        </Link>
-        <Link to="/trade-sa">
+        <Link to="/trade">
         <Button size='sm' colorScheme='teal' variant='outline'>Trade Synthetic Asset</Button>
         </Link>
         <Link to="/derivatives">
