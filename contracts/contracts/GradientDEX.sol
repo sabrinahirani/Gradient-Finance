@@ -9,14 +9,15 @@ contract LiquidityRewardPool is ReentrancyGuard {
 
     using FixedPointMathLib for uint256;
 
-    ERC20 immutable dai;
+    ERC20 immutable reward;
     LiquidityPool immutable accounting;
 
-    uint256 timestamp;
-    uint256 delay = 5 days;
+    uint256 public timestamp;
 
-    constructor(address _dai, address _accounting) {
-        dai = ERC20(_dai);
+    uint256 public delay = 7 days;
+
+    constructor(address _reward, address _accounting) {
+        reward = ERC20(_reward);
         accounting = LiquidityPool(_accounting);
         timestamp = block.timestamp;
     }
@@ -25,17 +26,22 @@ contract LiquidityRewardPool is ReentrancyGuard {
 
         require(block.timestamp > timestamp + delay, "Too early");
 
-        uint256 _totalReward = dai.balanceOf(address(this));
-        address[] memory providers = accounting.getProviders();
+        uint256 _total = reward.balanceOf(address(this));
+        address[] memory _providers = accounting.getProviders();
 
-        for (uint256 i = 0; i < providers.length; i++) {
-            uint256 _reward = _totalReward.mulWadDown(accounting.balanceOf(msg.sender)).divWadDown(accounting.totalSupply());
-            dai.transfer(providers[i], _reward);
+        require(_total > _providers.length, "Not enough reward");
+
+        for (uint256 i = 0; i < _providers.length; i++) {
+            address _provider = _providers[i];
+            uint256 _amount = _total.mulWadDown(accounting.balanceOf(msg.sender)).divWadDown(accounting.totalSupply());
+            reward.transfer(_provider, _amount);
         }
 
         timestamp = block.timestamp;
+
     }
-    
+
+
 }
 
 contract LiquidityPool is ERC20, ReentrancyGuard {
@@ -44,13 +50,13 @@ contract LiquidityPool is ERC20, ReentrancyGuard {
 
     ERC20 immutable x; // gradient asset
     ERC20 immutable y; // dai
-    ERC20 immutable dai; // also dai
+    ERC20 immutable dai;
 
     address immutable reward; // reward pool
 
-    uint256 public FEE = 1;
-
     address[] public providers;
+
+    uint256 public FEE = 1;
 
     constructor(address _x, address _y, uint256 _amountX, uint256 _amountY, address provider) ERC20("Gradient Liquidity Token", "GRADL", 18) {
         x = ERC20(_x);
