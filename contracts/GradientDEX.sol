@@ -9,15 +9,15 @@ contract LiquidityRewardPool is ReentrancyGuard {
 
     using FixedPointMathLib for uint256;
 
-    ERC20 immutable reward;
+    ERC20 immutable dai;
     LiquidityPool immutable accounting;
 
     uint256 public timestamp;
 
     uint256 public delay = 7 days;
 
-    constructor(address _reward, address _accounting) {
-        reward = ERC20(_reward);
+    constructor(address _dai, address _accounting) {
+        dai = ERC20(_dai);
         accounting = LiquidityPool(_accounting);
         timestamp = block.timestamp;
     }
@@ -26,7 +26,7 @@ contract LiquidityRewardPool is ReentrancyGuard {
 
         require(block.timestamp > timestamp + delay, "Too early");
 
-        uint256 _total = reward.balanceOf(address(this));
+        uint256 _total = dai.balanceOf(address(this));
         address[] memory _providers = accounting.getProviders();
 
         require(_total > _providers.length, "Not enough reward");
@@ -34,7 +34,7 @@ contract LiquidityRewardPool is ReentrancyGuard {
         for (uint256 i = 0; i < _providers.length; i++) {
             address _provider = _providers[i];
             uint256 _amount = _total.mulWadDown(accounting.balanceOf(msg.sender)).divWadDown(accounting.totalSupply());
-            reward.transfer(_provider, _amount);
+            dai.transfer(_provider, _amount);
         }
 
         timestamp = block.timestamp;
